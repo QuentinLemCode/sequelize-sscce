@@ -1,4 +1,4 @@
-import { DataTypes, Model } from 'sequelize';
+import { DataTypes, Model, LOCK } from 'sequelize';
 import { createSequelize6Instance } from '../dev/create-sequelize-instance';
 import { expect } from 'chai';
 import sinon from 'sinon';
@@ -36,6 +36,17 @@ export async function run() {
   await sequelize.sync({ force: true });
   expect(spy).to.have.been.called;
 
-  console.log(await Foo.create({ name: 'TS foo' }));
+  await Foo.create({ name: 'TS foo' });
   expect(await Foo.count()).to.equal(1);
+
+  console.log(typeof LOCK);
+  console.log(JSON.stringify(LOCK));
+
+  sequelize.transaction(async (t) => {
+    const foo = await Foo.findByPk(1, { lock: LOCK.UPDATE, transaction: t });
+    expect(foo).to.have.property('id', 1  );
+    await foo?.update({ name: 'TS foo updated' }, { transaction: t });
+  });
+
+  expect(await Foo.findByPk(1)).to.have.property('name', 'TS foo updated');
 }

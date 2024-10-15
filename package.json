@@ -19,7 +19,7 @@
   },
   "scripts": {
     "_test": "ts-node dev/runner.ts",
-    "test:sqlite": "cross-env DIALECT=sqlite yarn run _test",
+    "test:sqlite": "cross-env DIALECT=sqlite npm run _test",
     "test:postgres": "cross-env DIALECT=postgres yarn run _test",
     "test:postgres-native": "cross-env DIALECT=postgres-native yarn run _test",
     "test:mariadb": "cross-env DIALECT=mariadb yarn run _test",
